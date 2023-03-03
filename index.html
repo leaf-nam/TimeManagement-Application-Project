@@ -22,8 +22,25 @@
     <form id="todo-form" :>
       <input
         type="text"
-        placeholder="Write a To do and Press Enter!"
+        name="todo-text"
+        placeholder="Write What To Do!"
         required
+      />
+      <input
+        type="time"
+        name="todo-limit"
+        placeholder="Write Time Limit!"
+        required
+      />
+      <input
+      type="radio"
+      name="todo-importancy"
+      placeholder="Write Time Limit!"
+      required
+      />
+      <input
+        type ="submit"
+        value="Click"
       />
     </form>
     <ul id="todo-list"></ul>
@@ -34,5 +51,7 @@
     <script src="js/greetings.js"></script>
     <script src="js/clock.js"></script>
     <script src="js/todo.js"></script>
+    <script src="js/quotes.js"></script>
+    <script src="js/background.js"></script>
   </body>
 </html>
