@@ -19,24 +19,50 @@
     </form>
     <h2 id="clock"></h2>
     <h1 class="hidden" id="greeting"></h1>
-    <form id="todo-form" :>
+    <form class ="todo-make" id="todo-form">
       <input
         type="text"
         name="todo-text"
         placeholder="Write What To Do!"
         required
       />
+      <!-- "별"로 중요도 표현하는 코드 -->
+      <label>
+        <input type="radio" name="importancy" value="1"/> 
+        <span class="icon">★</span>
+      </label>
+      <label>
+        <input type="radio" name="importancy" value="2"/> 
+        <span class="icon">★</span>
+        <span class="icon">★</span>
+      </label>
+      <label>
+        <input type="radio" name="importancy" value="3"/> 
+        <span class="icon">★</span>
+        <span class="icon">★</span>
+        <span class="icon">★</span>
+      </label>
+      <label>
+        <input type="radio" name="importancy" value="4"/> 
+        <span class="icon">★</span>
+        <span class="icon">★</span>
+        <span class="icon">★</span>
+        <span class="icon">★</span>
+      </label>
+      <label>
+        <input type="radio" name="importancy" value="5"/> 
+        <span class="icon">★</span>
+        <span class="icon">★</span>
+        <span class="icon">★</span>
+        <span class="icon">★</span>
+        <span class="icon">★</span>
+      </label>
+      
       <input
-        type="time"
+        type="datetime-local"
         name="todo-limit"
-        placeholder="Write Time Limit!"
+        class ="limitBox"
         required
-      />
-      <input
-      type="radio"
-      name="todo-importancy"
-      placeholder="Write Time Limit!"
-      required
       />
       <input
         type ="submit"

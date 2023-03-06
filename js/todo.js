@@ -28,6 +28,16 @@ function paintTodo(newTodo) {  // Todo를 웹페이지(html)에 그리기 위한
   toDoList.appendChild(li);  // toDolist에 li를 하위요소로 포함
 }
 
+function getStar(){
+  var childList = toDoForm.childNodes;
+  for (var i=0; i<childList.length; i++){
+    if(childList[i].checked){
+      console.log(childList[i].value)
+    }
+  console.log(childList)
+  }
+}
+
 function handleToDoSubmit(event) {  // Todo를 Submit했을때 발생하는 일에 대한 함수
   event.preventDefault();  // 기본값(새로고침)이 발생되지 않도록 함
   const newTodo = toDoInput.value;  // newTodo에 현재 toDoForm에 입력된 input를 넣음
@@ -41,6 +51,7 @@ function handleToDoSubmit(event) {  // Todo를 Submit했을때 발생하는 일�
   };
   toDos.push(newTodoObj);  //newTodoObj를 배열에 추가
   paintTodo(newTodoObj);  //newTodo를 웹페이지에 그림
+  getStar()
   saveToDos();  // 현 Todos를 localStorage에 저장
 }
 
