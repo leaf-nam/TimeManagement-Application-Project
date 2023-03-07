@@ -19,45 +19,27 @@
     </form>
     <h2 id="clock"></h2>
     <h1 class="hidden" id="greeting"></h1>
-    <form class ="todo-make" id="todo-form">
+    <form id="todo-form">
       <input
         type="text"
+        class="textBox"
         name="todo-text"
         placeholder="Write What To Do!"
         required
       />
-      <!-- "별"로 중요도 표현하는 코드 -->
-      <label>
-        <input type="radio" name="importancy" value="1"/> 
-        <span class="icon">★</span>
-      </label>
-      <label>
-        <input type="radio" name="importancy" value="2"/> 
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-      </label>
-      <label>
-        <input type="radio" name="importancy" value="3"/> 
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-      </label>
-      <label>
-        <input type="radio" name="importancy" value="4"/> 
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-      </label>
-      <label>
-        <input type="radio" name="importancy" value="5"/> 
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-        <span class="icon">★</span>
-      </label>
-      
+      <div id="stars" class="rating" aria-required="true">
+        <!-- 좌우대칭해서 만들었기 때문에 value는 반대로 설정했음 -->
+        <input type="radio" id="star1" name="rating" value="5"> 
+        <label for="star1">&#9733;</label>
+        <input type="radio" id="star2" name="rating" value="4">
+        <label for="star2">&#9733;</label>
+        <input type="radio" id="star3" name="rating" value="3">
+        <label for="star3">&#9733;</label>
+        <input type="radio" id="star4" name="rating" value="2">
+        <label for="star4">&#9733;</label>
+        <input type="radio" id="star5" name="rating" value="1">
+        <label for="star5">&#9733;</label>
+      </div>
       <input
         type="datetime-local"
         name="todo-limit"
@@ -66,7 +48,7 @@
       />
       <input
         type ="submit"
-        value="Click"
+        value="click"
       />
     </form>
     <ul id="todo-list"></ul>
@@ -74,10 +56,10 @@
       <span></span>
       <span></span>
     </div>
-    <script src="js/greetings.js"></script>
-    <script src="js/clock.js"></script>
+    <!-- <script src="js/greetings.js"></script> -->
+    <!-- <script src="js/clock.js"></script> -->
     <script src="js/todo.js"></script>
-    <script src="js/quotes.js"></script>
-    <script src="js/background.js"></script>
+    <!-- <script src="js/quotes.js"></script> -->
+    <!-- <script src="js/background.js"></script> -->
   </body>
 </html>

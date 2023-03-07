@@ -1,7 +1,9 @@
-const toDoForm = document.querySelector("#todo-form");  // "todo-form" 이라는 값을 html에서 찾아서 저장
+const toDoForm = document.querySelector("#todo-form");  // "todo-form" 이라는 값을 DOM에서 찾아서 저장
 const toDoInput = toDoForm.querySelector("input[name='todo-text']");  // input 중 name이 todo-text인 값을 todoForm에서 찾아서 저장
-const toDolimit = toDoForm.querySelector("input[name='todo-limit']");  // input 중 name이 todo-limit인 값을 todoForm에서 찾아서 저장
-const toDoList = document.querySelector("#todo-list");  // "todo-list" 라는 값을 html에서 찾아서 저장
+const stars = toDoForm.querySelector("#stars");  // id가 star인 값을 todoForm에서 찾아서 저장
+const toDoImport = stars.querySelectorAll("input[type='radio']");
+const toDoLimit = toDoForm.querySelector("input[name='todo-limit']");  // input 중 name이 todo-limit인 값을 todoForm에서 찾아서 저장
+const toDoList = document.querySelector("#todo-list");  // id가 "todo-list"인 값을 DOM에서 찾아서 저장
 const TODOS_KEY = "todos";  // localStorage에 저장되는 Todos의 KEY값
 
 let toDos = [];
@@ -13,9 +15,13 @@ function saveToDos() { // Todo를 localStorage에 저장하기 위한 함수
 function paintTodo(newTodo) {  // Todo를 웹페이지(html)에 그리기 위한 함수(변수는 객체)
   const li = document.createElement("li");  // html에 li를 추가 후 변수로 저장
   li.id = newTodo.id;  // li의 id는 newTodo의 id(현재시간값)
+  li.classList.add("todoStyle");
   const span_input = document.createElement("span");  // html에 span을 추가 후 변수로 저장
   span_input.innerText = newTodo.text;  // span 내부 글자는 newTodo의 text(입력값)
   span_input.classList.add("textBox");
+  const span_importancy = document.createElement("span");
+  span_importancy.innerText = "★".repeat(newTodo.important);
+  span_importancy.classList.add("importancyBox");
   const span_limit = document.createElement("span");
   span_limit.innerText = "limit =" + newTodo.limit;
   span_limit.classList.add("limitBox");
@@ -23,35 +29,37 @@ function paintTodo(newTodo) {  // Todo를 웹페이지(html)에 그리기 위한
   button.innerText = "❌";  // button 내부 글자는 ❌(삭제 표시)
   button.addEventListener("click", deleteToDo);  // button을 클릭하는지 감지
   li.appendChild(span_input);  // li에 span을 하위요소로 포함
+  li.appendChild(span_importancy);  // li에 span을 하위요소로 포함
   li.appendChild(span_limit);  // li에 span을 하위요소로 포함
   li.appendChild(button);  // li에 button을 하위요소로 포함
   toDoList.appendChild(li);  // toDolist에 li를 하위요소로 포함
 }
 
-function getStar(){
-  var childList = toDoForm.childNodes;
-  for (var i=0; i<childList.length; i++){
-    if(childList[i].checked){
-      console.log(childList[i].value)
-    }
-  console.log(childList)
-  }
-}
-
 function handleToDoSubmit(event) {  // Todo를 Submit했을때 발생하는 일에 대한 함수
   event.preventDefault();  // 기본값(새로고침)이 발생되지 않도록 함
   const newTodo = toDoInput.value;  // newTodo에 현재 toDoForm에 입력된 input를 넣음
-  const limitTodo = toDolimit.value;  // limitTodo에 현재 toDolimit에 입력된 input를 넣음
+  const limitTodo = toDoLimit.value;  // limitTodo에 현재 toDolimit에 입력된 input를 넣음
+  let selectedImportancy;
+  toDoImport.forEach((star) => {
+    if (star.checked){
+      selectedImportancy = star.value;
+      star.checked = false;
+    }
+  })
+  if (selectedImportancy == undefined){
+    alert("중요도를 체크해주시기 바랍니다.");
+    return;
+  }
   toDoInput.value = null;  // toDoForm의 input을 초기화함
-  toDolimit.value = null;  // toDoForm의 limit을 초기화함
+  toDoLimit.value = null;  // toDoForm의 limit을 초기화함
   const newTodoObj = {  // newTodo의 객체를 생성
     id: Date.now(),  // id : 현재시간값
     text: newTodo,  // text : toDoForm 입력값
+    important: selectedImportancy,  // important : 선택된 중요도
     limit: limitTodo  // limit : toDoLimit 입력값
   };
   toDos.push(newTodoObj);  //newTodoObj를 배열에 추가
   paintTodo(newTodoObj);  //newTodo를 웹페이지에 그림
-  getStar()
   saveToDos();  // 현 Todos를 localStorage에 저장
 }
 

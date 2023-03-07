@@ -6,75 +6,79 @@
     background-color: tomato;
 }
 
-.textBox{
-    font-size: 25px;
-    border: 1px
-}
-
-.limitBox{
-    margin-left: 200px;
-    border: 2px
-    
-}
-/* 별 style */
-/* 기본 별 크기 */
-.todo-make{
-    display: inline-block;
+#todo-form{
     position: relative;
-    height: 30px;
-    line-height: 30px;
-    font-size: 30px;
-  }  
-
-.todo-make label {
-    position: absolute;
-    top: 0;
-    left: 1000;
-    height: 100%;
-    cursor: pointer;
+    padding-left: 0;
+    padding-inline-start: 0;
 }
 
-.todo-make label input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-}
-
-.todo-make label .icon {
+.rating {
+    position: relative;
     float: left;
-    color: gray;
+    bottom: 15px;
+    left: 5px;
+    display: flex;
+    flex-direction: row-reverse;
 }
 
-.todo-make label input:checked ~ .icon {
-    color: rgb(89, 149, 0);
-    text-shadow: 0 0 10px orange;    
+.rating input[type="radio"] {
+    display: none;
 }
 
-.todo-make label input:not(:checked) ~ .icon:first-child {
-    color: transparent;
+.rating label {
+    font-size: 30px;
+    color: #ddd;
+    cursor: pointer;
+    margin-right: 5px;
 }
 
-.todo-make:hover label input:hover ~ .icon {
-    color: rgb(89, 149, 0);
+.rating input[type="radio"]:checked + label,
+.rating input[type="radio"]:checked ~ label {
+    color: #00a80e;
 }
 
-.todo-make label:nth-child(1) {
-    z-index: 5;
+.rating input[type="radio"]:hover + label{
+    color: #00620f;
 }
 
-.todo-make label:nth-child(2) {
-    z-index: 4;
+#todo-list{
+    display: flex;
+    align-content: flex-start;
+    flex-direction: column;
+    flex-wrap: wrap;
+    overflow: auto;
+    position: absolute;
+    margin-top: 10;
+    padding-left: 0;
+    padding-inline-start: 0;
+    text-align: left;
 }
 
-.todo-make label:nth-child(3) {
-    z-index: 3;
+.todoStyle {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    text-align: left;
+    position: relative;
 }
 
-.todo-make label:nth-child(4) {
-    z-index: 2;
+.textBox {
+    float: left;
+    font-size: 15px;
+    border: 2px solid #ccc;
+    width: 100px;
 }
 
-.todo-make label:nth-child(5) {
-    z-index: 1;
+.importancyBox {
+    float: left;
+    font-size: 15px;
+    color: #00a80e;
+    width: 80px;
+    margin-left: 10px;
+}
+
+.limitBox {
+    border: 2px solid #ccc;
+    width: 100px;
+    margin-left: 10px;
 }
