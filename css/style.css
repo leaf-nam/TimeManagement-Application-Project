@@ -54,12 +54,17 @@
     text-align: left;
 }
 
+#todo-list #index span:not(:first-child) {
+    margin-left: 70px;
+    margin-bottom: 30px;
+}
 .todoStyle {
     margin: 0;
     padding: 0;
     display: inline-block;
     text-align: left;
     position: relative;
+    margin-bottom: 10px;
 }
 
 .textBox {
@@ -72,7 +77,7 @@
 .importancyBox {
     float: left;
     font-size: 15px;
-    color: #00a80e;
+    color: #6bd574;
     width: 80px;
     margin-left: 10px;
 }
@@ -80,5 +85,5 @@
 .limitBox {
     border: 2px solid #ccc;
     width: 100px;
-    margin-left: 10px;
+    margin-left: 40px;
 }

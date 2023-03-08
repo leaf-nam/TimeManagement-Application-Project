@@ -5,11 +5,25 @@ const toDoImport = stars.querySelectorAll("input[type='radio']");
 const toDoLimit = toDoForm.querySelector("input[name='todo-limit']");  // input 중 name이 todo-limit인 값을 todoForm에서 찾아서 저장
 const toDoList = document.querySelector("#todo-list");  // id가 "todo-list"인 값을 DOM에서 찾아서 저장
 const TODOS_KEY = "todos";  // localStorage에 저장되는 Todos의 KEY값
-
 let toDos = [];
+const savedToDos = localStorage.getItem(TODOS_KEY);  // localStorage에 있는 Todo를 불러와 변수로 저장
+const parsedToDos = JSON.parse(savedToDos);  // savedTodos에 있는 JSON형식의 파일을 자바스크립트 객체로 변환하여 저장한다.
+toDos = parsedToDos;  // savedTodos에 있는 내용을 현재 todo배열로 가져옴
 
 function saveToDos() { // Todo를 localStorage에 저장하기 위한 함수
   localStorage.setItem(TODOS_KEY, JSON.stringify(toDos));  // localStorage에 Todos를 JSON으로 변환해서 저장
+}
+
+function paintRemainTodo(todo) {
+  const date = new Date();
+  const hours = String(date.getHours()).padStart(2,"0");
+  const minutes = String(date.getMinutes()).padStart(2,"0");
+  const seconds = String(date.getSeconds()).padStart(2,"0");
+  todo.innerText = "Remains =" + `${hours} : ${minutes} : ${seconds}`;
+}
+
+function paintRemainTodos(parsed_todo){
+  parsed_todo.forEach(paintRemainTodo);
 }
 
 function paintTodo(newTodo) {  // Todo를 웹페이지(html)에 그리기 위한 함수(변수는 객체)
@@ -23,7 +37,7 @@ function paintTodo(newTodo) {  // Todo를 웹페이지(html)에 그리기 위한
   span_importancy.innerText = "★".repeat(newTodo.important);
   span_importancy.classList.add("importancyBox");
   const span_limit = document.createElement("span");
-  span_limit.innerText = "limit =" + newTodo.limit;
+  paintRemainTodo(span_limit)
   span_limit.classList.add("limitBox");
   const button = document.createElement("button");  // html에 button을 추가 후 변수로 저장
   button.innerText = "❌";  // button 내부 글자는 ❌(삭제 표시)
@@ -71,10 +85,10 @@ function deleteToDo(event) {  // Todo를 삭제하기 위한 함수(변수 event
 }
 
 toDoForm.addEventListener("submit", handleToDoSubmit);  
-  // TodoForm을 제출(submit)하는것을 감지하기 위해 EventLister 호출
-const savedToDos = localStorage.getItem(TODOS_KEY);  // localStorage에 있는 Todo를 불러와 변수로 저장
+// TodoForm을 제출(submit)하는것을 감지하기 위해 EventLister 호출
+
+setInterval(paintRemainTodos, 1000);
+
 if (savedToDos !== null) {  // savedTodos가 비어있지 않으면(localStorage가 비어있지 않으면):
-  const parsedToDos = JSON.parse(savedToDos);  // savedTodos에 있는 JSON형식의 파일을 자바스크립트 객체로 변환하여 저장한다.
-  toDos = parsedToDos;  // savedTodos에 있는 내용을 현재 todo배열로 가져옴
   parsedToDos.forEach(paintTodo);  // 각각의 parsedtodo를 html에 그림
 }
