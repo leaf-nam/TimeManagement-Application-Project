@@ -43,12 +43,13 @@
 
 #todo-list{
     display: flex;
+    align-items: flex-start;
     align-content: flex-start;
     flex-direction: column;
     flex-wrap: wrap;
     overflow: auto;
-    position: absolute;
-    margin-top: 10;
+    position: relative;
+    left: 0;
     padding-left: 0;
     padding-inline-start: 0;
     text-align: left;
@@ -86,4 +87,9 @@
     border: 2px solid #ccc;
     width: 100px;
     margin-left: 40px;
+}
+
+#canvas-container{
+    position: relative;
+    height: 500px;
 }

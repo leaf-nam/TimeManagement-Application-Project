@@ -1,29 +1,37 @@
 const toDoForm = document.querySelector("#todo-form");  // "todo-form" 이라는 값을 DOM에서 찾아서 저장
 const toDoInput = toDoForm.querySelector("input[name='todo-text']");  // input 중 name이 todo-text인 값을 todoForm에서 찾아서 저장
 const stars = toDoForm.querySelector("#stars");  // id가 star인 값을 todoForm에서 찾아서 저장
-const toDoImport = stars.querySelectorAll("input[type='radio']");
+const toDoImportancy = stars.querySelectorAll("input[type='radio']");
 const toDoLimit = toDoForm.querySelector("input[name='todo-limit']");  // input 중 name이 todo-limit인 값을 todoForm에서 찾아서 저장
 const toDoList = document.querySelector("#todo-list");  // id가 "todo-list"인 값을 DOM에서 찾아서 저장
 const TODOS_KEY = "todos";  // localStorage에 저장되는 Todos의 KEY값
+let savedToDos = localStorage.getItem(TODOS_KEY);  // localStorage에 있는 Todo를 불러와 변수로 저장
+let parsedToDos = JSON.parse(savedToDos);
 let toDos = [];
-const savedToDos = localStorage.getItem(TODOS_KEY);  // localStorage에 있는 Todo를 불러와 변수로 저장
-const parsedToDos = JSON.parse(savedToDos);  // savedTodos에 있는 JSON형식의 파일을 자바스크립트 객체로 변환하여 저장한다.
-toDos = parsedToDos;  // savedTodos에 있는 내용을 현재 todo배열로 가져옴
+toDos = parsedToDos;
 
 function saveToDos() { // Todo를 localStorage에 저장하기 위한 함수
-  localStorage.setItem(TODOS_KEY, JSON.stringify(toDos));  // localStorage에 Todos를 JSON으로 변환해서 저장
+  localStorage.setItem(TODOS_KEY, JSON.stringify(toDos));
+  savedToDos = localStorage.getItem(TODOS_KEY);
 }
 
-function paintRemainTodo(todo) {
+function RemainTimeCalcurate(todo) {
   const date = new Date();
-  const hours = String(date.getHours()).padStart(2,"0");
-  const minutes = String(date.getMinutes()).padStart(2,"0");
-  const seconds = String(date.getSeconds()).padStart(2,"0");
-  todo.innerText = "Remains =" + `${hours} : ${minutes} : ${seconds}`;
+  limit = new Date(todo.limit);
+  const diff = limit.getTime() - date.getTime();
+  const hours = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2,"0");
+  const minutes = String(Math.floor((diff - hours * 1000 * 60 * 60) / (1000 * 60))).padStart(2,"0");
+  const seconds = String(Math.floor((diff - hours * 1000 * 60 * 60 - minutes * 1000 * 60) / 1000)).padStart(2,"0");
+  return [hours, minutes, seconds];
 }
 
-function paintRemainTodos(parsed_todo){
-  parsed_todo.forEach(paintRemainTodo);
+function paintRemainTodo(toDolistLimit,todo) {
+  const remains = RemainTimeCalcurate(todo);
+  if (remains[0] < 0) {
+    toDolistLimit.innerText = "This To-Do is Time out!"
+  }else{
+    toDolistLimit.innerText = "Remains =" + `${remains[0]} : ${remains[1]} : ${remains[2]}`;
+  }
 }
 
 function paintTodo(newTodo) {  // Todo를 웹페이지(html)에 그리기 위한 함수(변수는 객체)
@@ -37,8 +45,8 @@ function paintTodo(newTodo) {  // Todo를 웹페이지(html)에 그리기 위한
   span_importancy.innerText = "★".repeat(newTodo.important);
   span_importancy.classList.add("importancyBox");
   const span_limit = document.createElement("span");
-  paintRemainTodo(span_limit)
   span_limit.classList.add("limitBox");
+  paintRemainTodo(span_limit,newTodo)
   const button = document.createElement("button");  // html에 button을 추가 후 변수로 저장
   button.innerText = "❌";  // button 내부 글자는 ❌(삭제 표시)
   button.addEventListener("click", deleteToDo);  // button을 클릭하는지 감지
@@ -54,7 +62,7 @@ function handleToDoSubmit(event) {  // Todo를 Submit했을때 발생하는 일�
   const newTodo = toDoInput.value;  // newTodo에 현재 toDoForm에 입력된 input를 넣음
   const limitTodo = toDoLimit.value;  // limitTodo에 현재 toDolimit에 입력된 input를 넣음
   let selectedImportancy;
-  toDoImport.forEach((star) => {
+  toDoImportancy.forEach((star) => {
     if (star.checked){
       selectedImportancy = star.value;
       star.checked = false;
@@ -78,17 +86,22 @@ function handleToDoSubmit(event) {  // Todo를 Submit했을때 발생하는 일�
 }
 
 function deleteToDo(event) {  // Todo를 삭제하기 위한 함수(변수 event는 특정사건이 발생했을때 생김)
-  const li = event.target.parentElement;  // 변수 li에 발생한 이벤트 내 target(button)의 parent(li)를 저장
+  const li = event.target.parentElement;  // 변수 li에 발생한 이벤트 내+ target(button)의 parent(li)를 저장
   toDos = toDos.filter((todo) => todo.id != parseInt(li.id));  // 배열의 원소 중 todo와 li가 다른 id(시간값)인 경우에만 저장(parseInt는 str을 int로 변경)
   li.remove();  // event가 발생한 todo의 li를 지워라
   saveToDos();  // 현 Todos(event가 발생한 todo 제외하고 나머지)를 localStorage에 저장하는 함수
 }
 
-toDoForm.addEventListener("submit", handleToDoSubmit);  
-// TodoForm을 제출(submit)하는것을 감지하기 위해 EventLister 호출
+toDoForm.addEventListener("submit", handleToDoSubmit);
 
-setInterval(paintRemainTodos, 1000);
-
-if (savedToDos !== null) {  // savedTodos가 비어있지 않으면(localStorage가 비어있지 않으면):
-  parsedToDos.forEach(paintTodo);  // 각각의 parsedtodo를 html에 그림
+let index = 0;
+if (savedToDos !== null) {
+  toDos = parsedToDos;
+  parsedToDos.forEach(paintTodo);
+  setInterval(() => {
+    parsedToDos = JSON.parse(savedToDos);
+    parsedToDos.forEach((todo) => {
+      const toDolistLimit = toDoList.querySelector(`li[id="${String(todo.id)}"] > span[class='limitBox']`);
+      paintRemainTodo(toDolistLimit,todo);
+    })},1000)
 }
