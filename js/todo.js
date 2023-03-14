@@ -17,7 +17,7 @@ function saveToDos() { // Todo를 localStorage에 저장하기 위한 함수
 
 function RemainTimeCalcurate(todo) {
   const date = new Date();
-  limit = new Date(todo.limit);
+  const limit = new Date(todo.limit);
   const diff = limit.getTime() - date.getTime();
   const hours = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2,"0");
   const minutes = String(Math.floor((diff - hours * 1000 * 60 * 60) / (1000 * 60))).padStart(2,"0");
@@ -34,7 +34,7 @@ function paintRemainTodo(toDolistLimit,todo) {
   }
 }
 
-function paintTodo(newTodo) {  // Todo를 웹페이지(html)에 그리기 위한 함수(변수는 객체)
+function paintTodo(newTodo) {  // 새로운 Todo의 속성값을 저장 후 html로 가져오는 함수
   const li = document.createElement("li");  // html에 li를 추가 후 변수로 저장
   li.id = newTodo.id;  // li의 id는 newTodo의 id(현재시간값)
   li.classList.add("todoStyle");
@@ -59,7 +59,7 @@ function paintTodo(newTodo) {  // Todo를 웹페이지(html)에 그리기 위한
 
 function handleToDoSubmit(event) {  // Todo를 Submit했을때 발생하는 일에 대한 함수
   event.preventDefault();  // 기본값(새로고침)이 발생되지 않도록 함
-  const newTodo = toDoInput.value;  // newTodo에 현재 toDoForm에 입력된 input를 넣음
+  const textTodo = toDoInput.value;  // textTodo에 현재 toDoForm에 입력된 input를 넣음
   const limitTodo = toDoLimit.value;  // limitTodo에 현재 toDolimit에 입력된 input를 넣음
   let selectedImportancy;
   toDoImportancy.forEach((star) => {
@@ -74,15 +74,15 @@ function handleToDoSubmit(event) {  // Todo를 Submit했을때 발생하는 일�
   }
   toDoInput.value = null;  // toDoForm의 input을 초기화함
   toDoLimit.value = null;  // toDoForm의 limit을 초기화함
-  const newTodoObj = {  // newTodo의 객체를 생성
+  const newTodo = {  // newTodo의 객체를 생성
     id: Date.now(),  // id : 현재시간값
-    text: newTodo,  // text : toDoForm 입력값
+    text: textTodo,  // text : toDoForm 입력값
     important: selectedImportancy,  // important : 선택된 중요도
     limit: limitTodo  // limit : toDoLimit 입력값
-  };
-  toDos.push(newTodoObj);  //newTodoObj를 배열에 추가
-  paintTodo(newTodoObj);  //newTodo를 웹페이지에 그림
-  saveToDos();  // 현 Todos를 localStorage에 저장
+  }
+  paintTodo(newTodo);  //newTodo객체를 html에 추가
+  toDos.push(newTodo);  //newTodo객체를 toDos 배열에 추가
+  saveToDos();  // 현 toDos 배열을 localStorage에 저장
 }
 
 function deleteToDo(event) {  // Todo를 삭제하기 위한 함수(변수 event는 특정사건이 발생했을때 생김)
@@ -96,7 +96,6 @@ toDoForm.addEventListener("submit", handleToDoSubmit);
 
 let index = 0;
 if (savedToDos !== null) {
-  toDos = parsedToDos;
   parsedToDos.forEach(paintTodo);
   setInterval(() => {
     parsedToDos = JSON.parse(savedToDos);
