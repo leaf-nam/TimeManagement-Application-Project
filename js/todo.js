@@ -20,17 +20,23 @@ function RemainTimeCalcurate(todo) {
   const limit = new Date(todo.limit);
   const diff = limit.getTime() - date.getTime();
   const hours = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, "0");
-  const minutes = String(Math.floor((diff - hours * 1000 * 60 * 60) / (1000 * 60))).padStart(2, "0");
-  const seconds = String(Math.floor((diff - hours * 1000 * 60 * 60 - minutes * 1000 * 60) / 1000)).padStart(2, "0");
+  const minutes = String(
+    Math.floor((diff - hours * 1000 * 60 * 60) / (1000 * 60))
+  ).padStart(2, "0");
+  const seconds = String(
+    Math.floor((diff - hours * 1000 * 60 * 60 - minutes * 1000 * 60) / 1000)
+  ).padStart(2, "0");
   return [hours, minutes, seconds];
 }
 // Todo의 limit까지 남은시간을 출력하기 위한 함수
 function paintRemainTodo(toDolistLimit, todo) {
   const remains = RemainTimeCalcurate(todo);
   if (remains[0] < 0) {
-    toDolistLimit.innerText = "Timeover =" + `${remains[0]} : ${remains[1]} : ${remains[2]}`;
+    toDolistLimit.innerText =
+      "Timeover =" + `${remains[0]} : ${remains[1]} : ${remains[2]}`;
   } else {
-    toDolistLimit.innerText = "Remains =" + `${remains[0]} : ${remains[1]} : ${remains[2]}`;
+    toDolistLimit.innerText =
+      "Remains =" + `${remains[0]} : ${remains[1]} : ${remains[2]}`;
   }
 }
 // 새로운 Todo의 속성값을 저장 후 html로 가져오는 함수
@@ -46,7 +52,7 @@ function paintTodo(newTodo) {
   span_importancy.classList.add("importancyBox");
   const span_limit = document.createElement("span");
   span_limit.classList.add("limitBox");
-  paintRemainTodo(span_limit, newTodo)
+  paintRemainTodo(span_limit, newTodo);
   const button = document.createElement("button");
   button.innerText = "❌";
   button.addEventListener("click", deleteToDo);
@@ -69,7 +75,7 @@ function handleToDoSubmit(event) {
       selectedImportancy = star.value;
       star.checked = false;
     }
-  })
+  });
   if (selectedImportancy == undefined) {
     alert("중요도를 체크해주시기 바랍니다.");
     return;
@@ -78,16 +84,17 @@ function handleToDoSubmit(event) {
     id: Date.now(),
     text: textTodo,
     important: selectedImportancy,
-    limit: limitTodo
-  }
+    limit: limitTodo,
+    is_mouse_on: false,
+  };
   paintTodo(newTodo);
   parsedToDos.push(newTodo);
   saveToDos();
   checkImg.onload = function () {
     console.log("hi");
     ctx.drawImage(checkImg, 500, 500, 50, 50);
-  }
-};
+  };
+}
 // ❌ 버튼을 클릭했을 때, Todo를 삭제하기 위한 함수
 function deleteToDo(event) {
   const li = event.target.parentElement;
@@ -105,8 +112,10 @@ if (savedToDos !== null) {
   setInterval(() => {
     parsedToDos = JSON.parse(savedToDos);
     parsedToDos.forEach((todo) => {
-      const toDolistLimit = toDoList.querySelector(`li[id="${String(todo.id)}"] > span[class='limitBox']`);
+      const toDolistLimit = toDoList.querySelector(
+        `li[id="${String(todo.id)}"] > span[class='limitBox']`
+      );
       paintRemainTodo(toDolistLimit, todo);
-    })
-  }, 1000)
+    });
+  }, 1000);
 }
