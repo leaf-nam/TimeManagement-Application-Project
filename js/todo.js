@@ -86,14 +86,14 @@ function handleToDoSubmit(event) {
     important: selectedImportancy,
     limit: limitTodo,
     is_mouse_on: false,
+    mouseLock: false,
   };
+  const locationTodo = calLocationTodo(newTodo);
+  newTodo.x = locationTodo[0];
+  newTodo.y = locationTodo[1];
   paintTodo(newTodo);
   parsedToDos.push(newTodo);
   saveToDos();
-  checkImg.onload = function () {
-    console.log("hi");
-    ctx.drawImage(checkImg, 500, 500, 50, 50);
-  };
 }
 // ❌ 버튼을 클릭했을 때, Todo를 삭제하기 위한 함수
 function deleteToDo(event) {
@@ -102,7 +102,7 @@ function deleteToDo(event) {
   li.remove();
   saveToDos();
 }
-//-----------------------main 코드-------------------------------//
+//<-----------------------main ------------------------------->
 // toDoForm이 submit되는지 감지하는 EventListener
 toDoForm.addEventListener("submit", handleToDoSubmit);
 // localStorage에 저장값이 있을때 이를 나타내기 위한 코드

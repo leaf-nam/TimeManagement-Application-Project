@@ -1,3 +1,4 @@
+// html 객체 불러오기
 const canvas = document.querySelector("#todoCanvas");
 const canvasContainer = document.querySelector("#canvas-container");
 const queriedToDo = document.querySelector("#todo-list");
@@ -10,10 +11,11 @@ const checkSize = 20;
 canvas.width = graphWidth;
 canvas.height = graphHeight;
 const ctx = canvas.getContext("2d");
-// 애니메이션을 위한 초기화
-let x = 100;
-let dx = 1;
+// 애니메이션을 위한 상수, 변수 초기화
 const radius = 20;
+const fontSize = radius * 3;
+let x = 100;
+let speed = 1;
 let nowText;
 let nowTodoX;
 let nowTodoY;
@@ -22,7 +24,7 @@ let mouseY;
 let downMouseX;
 let downMouseY;
 let isMouseDown = false;
-let fontSize = 30;
+let mouseLock = false;
 ctx.font = `${fontSize}px Arial`;
 // 마우스 움직였을 때 함수
 function handleMouseMove(event) {
@@ -30,20 +32,88 @@ function handleMouseMove(event) {
   mouseX = event.clientX - rect.left;
   mouseY = event.clientY - rect.top;
 }
-// 마우스 클릭했을 때 함수
-function handleMouseDown(event) {
-  let rect = canvas.getBoundingClientRect();
-  downMouseX = event.clientX - rect.left;
-  downMouseY = event.clientY - rect.top;
+// 마우스 눌렀을 때 함수
+function handleMouseDown() {
   isMouseDown = true;
+  parsedToDosOnGraph.forEach((todo) => {
+    if (todo.is_mouse_on) {
+      todo.mouseLock = true;
+    }
+  });
 }
-// Frame 그리는 함수
-function drawFrame() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // 격자
+// 마우스 뗐을 때 함수
+function handleMouseUp() {
+  isMouseDown = false;
+  parsedToDosOnGraph.forEach((todo) => (todo.mouseLock = false));
+  //   if (todo.mouseLock) {
+  //     console.log(todo);
+  //     const li = todo.parentElement;
+  //     parsedToDos = parsedToDos.filter((todo) => todo.id != parseInt(li.id));
+  //     li.remove();
+  //     paintTodo(todo);
+  //   }
+  // });
+  // parsedToDos = parsedToDosOnGraph;
+  // saveToDos();
+}
+// Todo 위치를 계산하기 위한 함수
+function calLocationTodo(todo) {
+  const remains = RemainTimeCalcurate(todo);
+  const locationX =
+    (graphWidth * (Number(remains[0]) * 60 + Number(remains[1]))) / (26 * 60);
+  const locationY = (graphHeight * (9 - (todo.important - 1) * 2)) / 10;
+  return [locationX, locationY];
+}
+// todo의 좌표를 바꾸는 함수
+function moveTodo(todo) {
+  if (todo.mouseLock) {
+    todo.x = mouseX;
+    todo.y = mouseY;
+  } else {
+    todo.x = todo.x - speed;
+    todo.y = todo.y;
+  }
+  if (todo.x - radius < 0) {
+    todo.x = graphWidth;
+  }
+}
+// Todo를 그리는 함수
+function paintTodoOnGraph(todo) {
+  moveTodo(todo);
+  ctx.beginPath();
+  ctx.arc(todo.x, todo.y, radius, 0, Math.PI * 2);
+  ctx.fillStyle = "red";
+  ctx.fill();
+}
+// Todo와 마우스의 거리를 구하는 함수
+function distanceToMouse(todo) {
+  let distance = Math.sqrt(
+    Math.pow(mouseX - todo.x, 2) + Math.pow(mouseY - todo.y, 2)
+  );
+  if (distance <= radius && !todo.is_mouse_on) {
+    todo.is_mouse_on = true;
+  } else if (distance > radius && todo.is_mouse_on) {
+    todo.is_mouse_on = false;
+  }
+}
+// Todo의 속성을 상자로 띄우는 함수
+function paintTodoRectOnGraph(todo) {
+  ctx.beginPath();
+  ctx.rect(mouseX, mouseY - radius * 10, radius * 20, radius * 10);
+  ctx.stroke();
+  ctx.fillText(`할 일 : ${todo.text}`, mouseX, mouseY - 2 * fontSize);
+  ctx.fillText(`남은시간 : ${todo.limit}`, mouseX, mouseY - fontSize);
+  ctx.fillText(
+    `중요도 : ${Math.round(5.5 - (mouseY * 5) / graphHeight)}`,
+    mouseX,
+    mouseY
+  );
+}
+// 격자를 그리는 함수
+function drawLine() {
+  x -= speed;
   ctx.strokeStyle = "green";
   ctx.lineWidth = 1;
-  x -= dx;
   if (x - radius < 0) {
     x = graphWidth;
   }
@@ -59,76 +129,28 @@ function drawFrame() {
     ctx.lineTo(graphWidth, (graphHeight / 10) * (2 * i - 1));
     ctx.stroke();
   }
-  // Check 표시
-  parsedToDos = JSON.parse(savedToDos);
-  let locationTodos = [];
-  parsedToDos.forEach((parsedToDo) =>
-    locationTodos.push(calLocationTodo(parsedToDo))
-  );
-  locationTodos.forEach(function (locationTodo) {
-    console.log(locationTodo[3]);
-    if (isMouseDown || !locationTodo[3]) {
-      circleX = locationTodo[0] + x;
-      circleY = locationTodo[1];
-    }
-    ctx.beginPath();
-    ctx.arc(circleX, circleY, radius, 0, Math.PI * 2);
-    ctx.fillStyle = "red";
-    ctx.fill();
-  });
+}
+// Frame 그리는 함수
+function drawFrame() {
+  // 캔버스 초기화
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   // 마우스 상호작용
   canvas.addEventListener("mousemove", handleMouseMove);
   canvas.addEventListener("mousedown", handleMouseDown);
-  parsedToDos.forEach((parsedToDo) => {
-    locationThis = calLocationTodo(parsedToDo);
-    thisCircleX = locationThis[0] + x;
-    thisCircleY = locationThis[1];
-    let distance = Math.sqrt(
-      Math.pow(mouseX - thisCircleX, 2) + Math.pow(mouseY - thisCircleY, 2)
-    );
-    let downDistance = Math.sqrt(
-      Math.pow(downMouseX - thisCircleX, 2) +
-        Math.pow(downMouseY - thisCircleY, 2)
-    );
-    if (distance <= radius && !parsedToDo.is_mouse_on) {
-      parsedToDo.is_mouse_on = true;
-      nowTodoX = mouseX;
-      nowTodoY = mouseY;
-      nowText = parsedToDo.text;
-    } else if (distance > radius && parsedToDo.is_mouse_on) {
-      parsedToDo.is_mouse_on = false;
-    }
-    if (downDistance <= radius && isMouseDown) {
-      thisCircleX = mouseX;
-      thisCircleY = mouseY;
-    }
-    if (parsedToDo.is_mouse_on) {
-      ctx.beginPath();
-      ctx.rect(
-        nowTodoX,
-        nowTodoY - checkSize * 5,
-        checkSize * 10,
-        checkSize * 5
-      );
-      ctx.stroke();
-      ctx.fillText(`할 일 : ${nowText}`, nowTodoX, nowTodoY - 2 * fontSize);
-      ctx.fillText(`남은시간 : ${nowTodoX}`, nowTodoX, nowTodoY - fontSize);
-      ctx.fillText(
-        `중요도 : ${Math.round(5.5 - (nowTodoY * 5) / graphHeight)}`,
-        nowTodoX,
-        nowTodoY
-      );
+  canvas.addEventListener("mouseup", handleMouseUp);
+  // 격자 그리기
+  drawLine();
+  // 각각의 Todo에서 작동해야 하는 함수(forEach문)
+  parsedToDosOnGraph.forEach((todo) => {
+    distanceToMouse(todo);
+    paintTodoOnGraph(todo);
+    if (todo.is_mouse_on) {
+      paintTodoRectOnGraph(todo);
     }
   });
+  // 재귀적으로 호출
   requestAnimationFrame(drawFrame);
 }
-// Todo 위치를 계산하기 위한 함수(변수는 todo객체)
-function calLocationTodo(todo) {
-  const remains = RemainTimeCalcurate(todo);
-  const locationX =
-    (graphWidth * (Number(remains[0]) * 60 + Number(remains[1]))) / (26 * 60);
-  const locationY = (graphHeight * (9 - (todo.important - 1) * 2)) / 10;
-  return [locationX, locationY, todo.text, todo.is_mouse_on];
-}
-
+//<---------------------------------main------------------------------------->
+let parsedToDosOnGraph = JSON.parse(savedToDos);
 requestAnimationFrame(drawFrame);
