@@ -14,7 +14,6 @@ const ctx = canvas.getContext("2d");
 // 애니메이션을 위한 상수, 변수 초기화
 const radius = 20;
 const fontSize = radius * 3;
-let x = 100;
 let speed = 1;
 let nowText;
 let nowTodoX;
@@ -25,7 +24,6 @@ let downMouseX;
 let downMouseY;
 let isMouseDown = false;
 let mouseLock = false;
-ctx.font = `${fontSize}px Arial`;
 // 마우스 움직였을 때 함수
 function handleMouseMove(event) {
   let rect = canvas.getBoundingClientRect();
@@ -44,18 +42,26 @@ function handleMouseDown() {
 // 마우스 뗐을 때 함수
 function handleMouseUp() {
   isMouseDown = false;
-  parsedToDosOnGraph.forEach((todo) => (todo.mouseLock = false));
-  //   if (todo.mouseLock) {
-  //     console.log(todo);
-  //     const li = todo.parentElement;
-  //     parsedToDos = parsedToDos.filter((todo) => todo.id != parseInt(li.id));
-  //     li.remove();
-  //     paintTodo(todo);
-  //   }
-  // });
-  // parsedToDos = parsedToDosOnGraph;
-  // saveToDos();
+  parsedToDosOnGraph.forEach((todo) => {
+    if (todo.mouseLock) {
+      todo.limit = mouseX;
+      todo.important = Math.round(5.5 - (mouseY * 5) / graphHeight);
+      todo.y = (graphHeight * (9 - (todo.important - 1) * 2)) / 10;
+    }
+    todo.mouseLock = false;
+  });
 }
+//   if (todo.mouseLock) {
+//     console.log(todo);
+//     const li = todo.parentElement;
+//     parsedToDos = parsedToDos.filter((todo) => todo.id != parseInt(li.id));
+//     li.remove();
+//     paintTodo(todo);
+//   }
+// });
+// parsedToDos = parsedToDosOnGraph;
+// saveToDos();
+
 // Todo 위치를 계산하기 위한 함수
 function calLocationTodo(todo) {
   const remains = RemainTimeCalcurate(todo);
@@ -101,33 +107,34 @@ function paintTodoRectOnGraph(todo) {
   ctx.beginPath();
   ctx.rect(mouseX, mouseY - radius * 10, radius * 20, radius * 10);
   ctx.stroke();
+  ctx.font = `${fontSize}px Arial`;
   ctx.fillText(`할 일 : ${todo.text}`, mouseX, mouseY - 2 * fontSize);
   ctx.fillText(`남은시간 : ${todo.limit}`, mouseX, mouseY - fontSize);
-  ctx.fillText(
-    `중요도 : ${Math.round(5.5 - (mouseY * 5) / graphHeight)}`,
-    mouseX,
-    mouseY
-  );
+  ctx.fillText(`중요도 : ${todo.important}`, mouseX, mouseY);
 }
 // 격자를 그리는 함수
-function drawLine() {
+function paintLine() {
+  let x = 100;
   x -= speed;
   ctx.strokeStyle = "green";
   ctx.lineWidth = 1;
   if (x - radius < 0) {
     x = graphWidth;
   }
-  for (let i = 1; i <= 48; i++) {
+  for (let i = 1; i <= 24; i++) {
     ctx.beginPath();
-    ctx.moveTo(x + ((i - 24) * graphWidth) / 24, 0);
-    ctx.lineTo(x + ((i - 24) * graphWidth) / 24, graphHeight);
+    ctx.moveTo(((24 - i) * graphWidth) / 24, 0);
+    ctx.lineTo(((24 - i) * graphWidth) / 24, graphHeight);
     ctx.stroke();
+    ctx.font = `${fontSize / 3}px Arial`;
+    ctx.fillText(`${24 - i}시`, ((24 - i) * graphWidth) / 24, graphHeight);
   }
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 1; i <= 5; i++) {
     ctx.beginPath();
     ctx.moveTo(0, (graphHeight / 10) * (2 * i - 1));
     ctx.lineTo(graphWidth, (graphHeight / 10) * (2 * i - 1));
     ctx.stroke();
+    ctx.fillText("★".repeat(6 - i), 0, (graphHeight / 10) * (2 * i - 1));
   }
 }
 // Frame 그리는 함수
@@ -139,7 +146,7 @@ function drawFrame() {
   canvas.addEventListener("mousedown", handleMouseDown);
   canvas.addEventListener("mouseup", handleMouseUp);
   // 격자 그리기
-  drawLine();
+  paintLine();
   // 각각의 Todo에서 작동해야 하는 함수(forEach문)
   parsedToDosOnGraph.forEach((todo) => {
     distanceToMouse(todo);

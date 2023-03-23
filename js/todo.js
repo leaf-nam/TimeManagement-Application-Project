@@ -16,9 +16,7 @@ function saveToDos() {
 }
 // Todo의 limit까지 남은시간을 계산하기 위한 함수
 function RemainTimeCalcurate(todo) {
-  const date = new Date();
-  const limit = new Date(todo.limit);
-  const diff = limit.getTime() - date.getTime();
+  const diff = new Date(todo.limit).getTime() - new Date().getTime();
   const hours = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, "0");
   const minutes = String(
     Math.floor((diff - hours * 1000 * 60 * 60) / (1000 * 60))
