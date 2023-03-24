@@ -1,4 +1,4 @@
-// HTML에서 요소 속성 불러오기
+// HTML 객체 불러오기
 const toDoForm = document.querySelector("#todo-form");
 const toDoInput = toDoForm.querySelector("input[name='todo-text']");
 const stars = toDoForm.querySelector("#stars");
@@ -16,13 +16,14 @@ function saveToDos() {
 }
 // Todo의 limit까지 남은시간을 계산하기 위한 함수
 function RemainTimeCalcurate(todo) {
-  const diff = new Date(todo.limit).getTime() - new Date().getTime();
-  const hours = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, "0");
-  const minutes = String(
-    Math.floor((diff - hours * 1000 * 60 * 60) / (1000 * 60))
-  ).padStart(2, "0");
+  const limit = todo.limit;
+  const hours = String(Math.floor(limit / (60 * 60))).padStart(2, "0");
+  const minutes = String(Math.floor((limit - hours * 60) / 60)).padStart(
+    2,
+    "0"
+  );
   const seconds = String(
-    Math.floor((diff - hours * 1000 * 60 * 60 - minutes * 1000 * 60) / 1000)
+    Math.floor(limit - hours * 60 * 60 - minutes * 60)
   ).padStart(2, "0");
   return [hours, minutes, seconds];
 }
@@ -82,10 +83,11 @@ function handleToDoSubmit(event) {
     id: Date.now(),
     text: textTodo,
     important: selectedImportancy,
-    limit: limitTodo,
+    limit: (new Date(limitTodo).getTime() - new Date().getTime()) / 1000,
     is_mouse_on: false,
     mouseLock: false,
   };
+  console.log(newTodo.limit);
   const locationTodo = calLocationTodo(newTodo);
   newTodo.x = locationTodo[0];
   newTodo.y = locationTodo[1];
@@ -110,7 +112,9 @@ if (savedToDos !== null) {
   setInterval(() => {
     parsedToDos = JSON.parse(savedToDos);
     parsedToDos.forEach((todo) => {
-      const toDolistLimit = toDoList.querySelector(
+      todo.limit = todo.limit - 1;
+      saveToDos();
+      let toDolistLimit = toDoList.querySelector(
         `li[id="${String(todo.id)}"] > span[class='limitBox']`
       );
       paintRemainTodo(toDolistLimit, todo);
