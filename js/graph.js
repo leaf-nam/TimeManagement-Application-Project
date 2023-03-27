@@ -15,12 +15,13 @@ const ctx = canvas.getContext("2d");
 const radius = 20;
 const fontSize = radius * 3;
 const distancePerSecond = graphWidth / (24 * 60);
-let speed = 1;
+const startTime = new Date();
+let speed;
 let mouseX;
 let mouseY;
 let isMouseDown = false;
 let mouseLock = false;
-let lastTime = new Date();
+let lastTime = startTime;
 let xStandard = graphWidth;
 // 마우스 움직였을 때 함수
 function handleMouseMove(event) {
@@ -42,28 +43,26 @@ function handleMouseUp() {
   isMouseDown = false;
   parsedToDosOnGraph.forEach((todo) => {
     if (todo.mouseLock) {
-      todo.limit = mouseX;
+      const toDoInHtml = toDoList.querySelector(`li[id="${String(todo.id)}"]`);
+      todo.limit = (mouseX * 24 * 60 * 60) / graphWidth;
+      const remains = RemainTimeCalcurate(todo);
+      toDoInHtml.querySelector("span[class='limitBox']").innerText =
+        "Remains =" + `${remains[0]} : ${remains[1]} : ${remains[2]}`;
       todo.important = Math.round(5.5 - (mouseY * 5) / graphHeight);
+      toDoInHtml.querySelector("span[class='importancyBox']").innerText =
+        "★".repeat(todo.important);
+      todo.x = (todo.limit * graphWidth) / (24 * 60 * 60);
       todo.y = (graphHeight * (9 - (todo.important - 1) * 2)) / 10;
     }
     todo.mouseLock = false;
   });
+  parsedToDos = parsedToDosOnGraph;
+  saveToDos();
 }
-//   if (todo.mouseLock) {
-//     console.log(todo);
-//     const li = todo.parentElement;
-//     parsedToDos = parsedToDos.filter((todo) => todo.id != parseInt(li.id));
-//     li.remove();
-//     paintTodo(todo);
-//   }
-// });
-// parsedToDos = parsedToDosOnGraph;
-// saveToDos();
 // Todo 위치를 계산하는 함수
 function calLocationTodo(todo) {
   const locationX = (graphWidth / (24 * 60 * 60)) * todo.limit;
   const locationY = (graphHeight * (9 - (todo.important - 1) * 2)) / 10;
-  console.log(locationX);
   return [locationX, locationY];
 }
 // todo의 좌표를 바꾸는 함수
@@ -72,15 +71,17 @@ function moveTodo(todo) {
     todo.x = mouseX;
     todo.y = mouseY;
   } else {
-    now = xStandard + todo.x - graphWidth;
-    console.log(now);
+    todo.x -= speed;
+  }
+  if (todo.x < 0) {
+    todo.x = graphWidth;
   }
 }
 // Todo를 그리는 함수
 function paintTodoOnGraph(todo) {
   moveTodo(todo);
   ctx.beginPath();
-  ctx.arc(now, todo.y, radius, 0, Math.PI * 2);
+  ctx.arc(todo.x, todo.y, radius, 0, Math.PI * 2);
   ctx.fillStyle = "red";
   ctx.fill();
 }
@@ -97,43 +98,69 @@ function distanceToMouse(todo) {
 }
 // Todo의 속성을 상자로 띄우는 함수
 function paintTodoRectOnGraph(todo) {
+  let limit = (todo.x * 24 * 60 * 60) / graphWidth;
+  console.log(limit);
+  const hours = String(Math.floor(limit / (60 * 60))).padStart(2, "0");
+  const minutes = String(Math.floor((limit - hours * 60 * 60) / 60)).padStart(
+    2,
+    "0"
+  );
+  const seconds = String(
+    Math.floor(limit - hours * 60 * 60 - minutes * 60)
+  ).padStart(2, "0");
+  const remains = [hours, minutes, seconds];
   ctx.beginPath();
-  ctx.rect(mouseX, mouseY - radius * 10, radius * 20, radius * 10);
+  ctx.rect(mouseX, mouseY - radius * 5, radius * 15, radius * 5);
   ctx.stroke();
-  ctx.font = `${fontSize}px Arial`;
-  ctx.fillText(`할 일 : ${todo.text}`, mouseX, mouseY - 2 * fontSize);
-  ctx.fillText(`남은시간 : ${todo.limit}초`, mouseX, mouseY - fontSize);
+  ctx.font = `${fontSize / 2}px Arial`;
+  ctx.fillText(`할 일 : ${todo.text}`, mouseX, mouseY - fontSize);
+  ctx.fillText(
+    `남은시간 = ${remains[0]} : ${remains[1]} : ${remains[2]}`,
+    mouseX,
+    mouseY - fontSize / 2
+  );
   ctx.fillText(`중요도 : ${todo.important}`, mouseX, mouseY);
 }
-// 1초에 전체 길이 / (24*60) 만큼 이동하기 위해 다음 위치를 계산하는 함수
+// 1초에 전체 길이 / (24*60*60) 만큼 이동하기 위해 다음 위치를 계산하는 함수
 function distancePerFrame(timestamp = new Date()) {
   const elapsed = timestamp - lastTime;
   if (lastTime != timestamp) lastTime = timestamp;
   const distancePerFrame = (distancePerSecond / 1000) * elapsed;
+  // 1초에 1시간씩 이동
   return distancePerFrame;
 }
 // 격자를 그리는 함수
 function paintLine() {
   ctx.strokeStyle = "green";
   ctx.lineWidth = 1;
-  for (let i = 1; i <= 24; i++) {
+  for (let i = 23; i >= 0; i--) {
+    lineX = xStandard - (i / 24) * graphWidth;
+    if (lineX < 0) {
+      lineX = xStandard - (i / 24) * graphWidth + graphWidth;
+    }
     ctx.beginPath();
-    ctx.moveTo(xStandard - ((24 - i) / 24) * graphWidth, 0);
-    ctx.lineTo(xStandard - ((24 - i) / 24) * graphWidth, graphHeight);
+    ctx.moveTo(lineX, 0);
+    ctx.lineTo(lineX, graphHeight);
     ctx.stroke();
+    const startHour = startTime.getHours();
+    if (startHour - i > 0) {
+      text = startHour - i;
+    } else {
+      text = startHour - i + 24;
+    }
     ctx.font = `${fontSize / 3}px Arial`;
-    ctx.fillText(
-      `${i}시`,
-      xStandard - ((24 - i) * graphWidth) / 24,
-      graphHeight
-    );
+    ctx.fillText(`${text}시`, lineX, graphHeight);
   }
   for (let i = 1; i <= 5; i++) {
     ctx.beginPath();
     ctx.moveTo(0, (graphHeight / 10) * (2 * i - 1));
     ctx.lineTo(graphWidth, (graphHeight / 10) * (2 * i - 1));
     ctx.stroke();
-    ctx.fillText("★".repeat(6 - i), 0, (graphHeight / 10) * (2 * i - 1));
+    ctx.fillText(
+      "★".repeat(6 - i) + "☆".repeat(i - 1),
+      0,
+      (graphHeight / 10) * (2 * i - 1)
+    );
   }
 }
 // Frame 그리는 함수
@@ -145,7 +172,8 @@ function drawFrame() {
   canvas.addEventListener("mousedown", handleMouseDown);
   canvas.addEventListener("mouseup", handleMouseUp);
   // 기준시간(24시간 뒤)을 1초에 해당거리만큼 이동시키기
-  xStandard -= distancePerFrame();
+  speed = distancePerFrame();
+  xStandard -= speed;
   if (xStandard < 0) {
     xStandard = graphWidth;
   }
