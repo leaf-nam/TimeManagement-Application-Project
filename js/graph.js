@@ -46,11 +46,9 @@ function handleMouseUp() {
       const toDoInHtml = toDoList.querySelector(`li[id="${String(todo.id)}"]`);
       todo.limit = (mouseX * 24 * 60 * 60) / graphWidth;
       const remains = RemainTimeCalcurate(todo);
-      toDoInHtml.querySelector("span[class='limitBox']").innerText =
-        "Remains =" + `${remains[0]} : ${remains[1]} : ${remains[2]}`;
+      toDoInHtml.querySelector("span[class='limitBox']").innerText = "Remains =" + `${remains[0]} : ${remains[1]}`;
       todo.important = Math.round(5.5 - (mouseY * 5) / graphHeight);
-      toDoInHtml.querySelector("span[class='importancyBox']").innerText =
-        "★".repeat(todo.important);
+      toDoInHtml.querySelector("span[class='importancyBox']").innerText = "★".repeat(todo.important);
       todo.x = (todo.limit * graphWidth) / (24 * 60 * 60);
       todo.y = (graphHeight * (9 - (todo.important - 1) * 2)) / 10;
     }
@@ -58,12 +56,6 @@ function handleMouseUp() {
   });
   parsedToDos = parsedToDosOnGraph;
   saveToDos();
-}
-// Todo 위치를 계산하는 함수
-function calLocationTodo(todo) {
-  const locationX = (graphWidth / (24 * 60 * 60)) * todo.limit;
-  const locationY = (graphHeight * (9 - (todo.important - 1) * 2)) / 10;
-  return [locationX, locationY];
 }
 // todo의 좌표를 바꾸는 함수
 function moveTodo(todo) {
@@ -87,9 +79,7 @@ function paintTodoOnGraph(todo) {
 }
 // Todo와 마우스의 거리를 구하는 함수
 function distanceToMouse(todo) {
-  let distance = Math.sqrt(
-    Math.pow(mouseX - todo.x, 2) + Math.pow(mouseY - todo.y, 2)
-  );
+  let distance = Math.sqrt(Math.pow(mouseX - todo.x, 2) + Math.pow(mouseY - todo.y, 2));
   if (distance <= radius && !todo.is_mouse_on) {
     todo.is_mouse_on = true;
   } else if (distance > radius && todo.is_mouse_on) {
@@ -98,27 +88,18 @@ function distanceToMouse(todo) {
 }
 // Todo의 속성을 상자로 띄우는 함수
 function paintTodoRectOnGraph(todo) {
-  let limit = (todo.x * 24 * 60 * 60) / graphWidth;
-  console.log(limit);
+  console.log(todo.x / graphWidth);
+  const limit = (todo.x / graphWidth) * 24 * 60 * 60;
   const hours = String(Math.floor(limit / (60 * 60))).padStart(2, "0");
-  const minutes = String(Math.floor((limit - hours * 60 * 60) / 60)).padStart(
-    2,
-    "0"
-  );
-  const seconds = String(
-    Math.floor(limit - hours * 60 * 60 - minutes * 60)
-  ).padStart(2, "0");
+  const minutes = String(Math.floor((limit - hours * 60 * 60) / 60)).padStart(2, "0");
+  const seconds = String(Math.floor(limit - hours * 60 * 60 - minutes * 60)).padStart(2, "0");
   const remains = [hours, minutes, seconds];
   ctx.beginPath();
   ctx.rect(mouseX, mouseY - radius * 5, radius * 15, radius * 5);
   ctx.stroke();
   ctx.font = `${fontSize / 2}px Arial`;
   ctx.fillText(`할 일 : ${todo.text}`, mouseX, mouseY - fontSize);
-  ctx.fillText(
-    `남은시간 = ${remains[0]} : ${remains[1]} : ${remains[2]}`,
-    mouseX,
-    mouseY - fontSize / 2
-  );
+  ctx.fillText(`남은시간 = ${remains[0]} : ${remains[1]} : ${remains[2]}`, mouseX, mouseY - fontSize / 2);
   ctx.fillText(`중요도 : ${todo.important}`, mouseX, mouseY);
 }
 // 1초에 전체 길이 / (24*60*60) 만큼 이동하기 위해 다음 위치를 계산하는 함수
@@ -156,11 +137,7 @@ function paintLine() {
     ctx.moveTo(0, (graphHeight / 10) * (2 * i - 1));
     ctx.lineTo(graphWidth, (graphHeight / 10) * (2 * i - 1));
     ctx.stroke();
-    ctx.fillText(
-      "★".repeat(6 - i) + "☆".repeat(i - 1),
-      0,
-      (graphHeight / 10) * (2 * i - 1)
-    );
+    ctx.fillText("★".repeat(6 - i) + "☆".repeat(i - 1), 0, (graphHeight / 10) * (2 * i - 1));
   }
 }
 // Frame 그리는 함수
