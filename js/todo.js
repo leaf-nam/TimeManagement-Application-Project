@@ -32,7 +32,7 @@ function paintTodo(newTodo) {
   span_input.innerText = newTodo.text;
   span_input.classList.add("textBox");
   const span_importancy = document.createElement("span");
-  span_importancy.innerText = "★".repeat(newTodo.important);
+  span_importancy.innerText = "★".repeat(newTodo.important) + "☆".repeat(5 - newTodo.important);
   span_importancy.classList.add("importancyBox");
   const span_limit = document.createElement("span");
   span_limit.classList.add("limitBox");
@@ -73,6 +73,7 @@ function handleToDoSubmit(event) {
     is_mouse_on: false,
     mouseLock: false,
   };
+
   newTodo.x = (newTodo.limit * graphWidth) / (24 * 60 * 60);
   newTodo.y = (graphHeight * (9 - (newTodo.important - 1) * 2)) / 10;
   paintTodo(newTodo);
@@ -92,17 +93,4 @@ toDoForm.addEventListener("submit", handleToDoSubmit);
 // localStorage에 저장값이 있을때 이를 나타내기 위한 코드
 if (savedToDos !== null) {
   parsedToDos.forEach(paintTodo);
-  // 1초마다 남은 시간을 다시 출력하는 코드
-  // setInterval(() => {
-  //   parsedToDos = JSON.parse(savedToDos);
-  // parsedToDos.forEach((todo) => {
-  //   todo.limit = todo.limit - 1;
-  //     saveToDos();
-  //     let toDolistLimit = toDoList.querySelector(
-  //       `li[id="${String(todo.id)}"] > span[class='limitBox']`
-  //     );
-  //     const remains = RemainTimeCalcurate(todo);
-  //     toDolistLimit.innerText = `Remains = ${remains[0]} : ${remains[1]} : ${remains[2]}`;
-  //   });
-  // }, 1000);
 }
