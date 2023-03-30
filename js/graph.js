@@ -14,7 +14,7 @@ const ctx = canvas.getContext("2d");
 // 애니메이션을 위한 상수, 변수 초기화
 const radius = 20;
 const fontSize = radius * 3;
-const distancePerSecond = graphWidth / (24 * 60);
+const distancePerSecond = graphWidth / (24 * 60 * 60);
 const startTime = new Date();
 let speed;
 let mouseX;
@@ -45,13 +45,12 @@ function handleMouseUp() {
   parsedToDosOnGraph.forEach((todo) => {
     if (todo.mouseLock) {
       const toDoInHtml = toDoList.querySelector(`li[id="${String(todo.id)}"]`);
-      todo.limit = (mouseX / distancePerSecond) * 60;
+      todo.limit = mouseX / distancePerSecond;
       const remains = RemainTimeCalcurate(todo);
-      toDoInHtml.querySelector("span[class='limitBox']").innerText = "Remains =" + `${remains[0]} : ${remains[1]}`;
+      toDoInHtml.querySelector("span[class='limitBox']").innerText = `Remains = ${remains[0]} : ${remains[1]} : ${remains[2]}`;
       todo.important = Math.round(5.5 - (mouseY * 5) / graphHeight);
-      toDoInHtml.querySelector("span[class='importancyBox']").innerText =
-        "★".repeat(todo.important) + "☆".repeat(5 - todo.important);
-      todo.x = (todo.limit * distancePerSecond) / 60;
+      toDoInHtml.querySelector("span[class='importancyBox']").innerText = "★".repeat(todo.important) + "☆".repeat(5 - todo.important);
+      todo.x = todo.limit * distancePerSecond;
       todo.y = (graphHeight * (9 - (todo.important - 1) * 2)) / 10;
     }
     todo.mouseLock = false;
@@ -65,7 +64,7 @@ function moveTodo(todo) {
     todo.x = mouseX;
     todo.y = mouseY;
   } else {
-    todo.x -= speed * 60;
+    todo.x -= speed;
   }
   if (todo.x < 0) {
     todo.x = graphWidth;
@@ -99,12 +98,12 @@ function paintTodoRectOnGraph(todo) {
   ctx.fillText(`남은시간 = ${remains[0]} : ${remains[1]} : ${remains[2]}`, mouseX, mouseY - fontSize / 2);
   ctx.fillText(`중요도 : ${todo.important}`, mouseX, mouseY);
 }
-// 시간 함수
-function timePerFrame(timestamp = new Date()) {
-  const elapsed = timestamp - lastTime;
+// 시간 함수 : 경과시간(초)을 구한 후, 1초에 가야하는 거리와 곱함
+function getDistancePerFrame(timestamp = new Date()) {
+  const elapsed = (timestamp - lastTime) / 1000;
   if (lastTime != timestamp) lastTime = timestamp;
-  const distancePerFrame = (distancePerSecond / 1000) * elapsed;
-  return [distancePerFrame, elapsed];
+  const distancePerFrame = distancePerSecond * elapsed;
+  return distancePerFrame;
 }
 // 격자를 그리는 함수
 function paintLine() {
@@ -145,24 +144,22 @@ function drawFrame() {
   canvas.addEventListener("mousedown", handleMouseDown);
   canvas.addEventListener("mouseup", handleMouseUp);
   // 기준시간(24시간 뒤)을 1초에 해당거리만큼 이동시키기
-  [speed, elapsed] = timePerFrame();
-  xStandard -= speed * 60;
+  distancePerFrame = getDistancePerFrame();
+  speed = distancePerFrame * 1;
+  xStandard -= speed;
   // 현재시간 확인해서, 1초마다 함수 실행하기
-  now += elapsed;
-  // if (now > 1000) {
-  //   now = 0;
-  //   parsedToDosOnGraph.forEach((todo) => {
-  //     parsedToDosOnGraph = JSON.parse(savedToDos);
-  //     todo.limit = todo.limit - 1;
-  //     console.log(todo.limit);
-  //     console.log(todo.x);
-  //     let toDolistLimit = toDoList.querySelector(`li[id="${String(todo.id)}"] > span[class='limitBox']`);
-  //     const remains = RemainTimeCalcurate(todo);
-  //     toDolistLimit.innerText = `Remains = ${remains[0]} : ${remains[1]} : ${remains[2]}`;
-  //     parsedToDosOnGraph = parsedToDos;
-  //     saveToDos();
-  //   });
-  // }
+  now += distancePerFrame / distancePerSecond;
+  if (now > 1) {
+    now = 0;
+    parsedToDosOnGraph.forEach((todo) => {
+      todo.limit = todo.x / distancePerSecond;
+      let toDolistLimit = toDoList.querySelector(`li[id="${String(todo.id)}"] > span[class='limitBox']`);
+      const remains = RemainTimeCalcurate(todo);
+      toDolistLimit.innerText = `Remains = ${remains[0]} : ${remains[1]} : ${remains[2]}`;
+      parsedToDos = parsedToDosOnGraph;
+      saveToDos();
+    });
+  }
   // 끝까지 갔을 때(하루가 지나면)
   if (xStandard < 0) {
     xStandard = graphWidth;

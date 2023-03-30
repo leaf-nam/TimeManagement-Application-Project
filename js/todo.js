@@ -37,7 +37,7 @@ function paintTodo(newTodo) {
   const span_limit = document.createElement("span");
   span_limit.classList.add("limitBox");
   const remains = RemainTimeCalcurate(newTodo);
-  span_limit.innerText = "Remains =" + `${remains[0]} : ${remains[1]}`;
+  span_limit.innerText = `Remains = ${remains[0]} : ${remains[1]} : ${remains[2]}`;
   const button = document.createElement("button");
   button.innerText = "❌";
   button.addEventListener("click", deleteToDo);
