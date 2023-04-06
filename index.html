@@ -8,64 +8,49 @@
     <title>TimeManagement</title>
   </head>
   <body>
-    <form class="hidden" id="login-form">
-      <input
-        required
-        maxlength="15"
-        type="text"
-        placeholder="What is your name?"
-      />
-      <input type="submit" value="Log In" />
-    </form>
-    <h2 id="clock"></h2>
-    <h1 class="hidden" id="greeting"></h1>
     <form id="todo-form">
-      <input
-        type="text"
-        class="formTextBox"
-        name="todo-text"
-        placeholder="Write What To Do!"
-        required
-      />
+      <input type="text" class="form-text-box" name="todo-text" placeholder="Write What To Do!" required />
       <div id="stars" class="rating" aria-required="true">
         <!-- 좌우대칭해서 만들었기 때문에 value는 반대로 설정했음 -->
-        <input type="radio" id="star1" name="rating" value="5"> 
+        <input type="radio" id="star1" name="rating" value="5" />
         <label for="star1">&#9733;</label>
-        <input type="radio" id="star2" name="rating" value="4">
+        <input type="radio" id="star2" name="rating" value="4" />
         <label for="star2">&#9733;</label>
-        <input type="radio" id="star3" name="rating" value="3">
+        <input type="radio" id="star3" name="rating" value="3" />
         <label for="star3">&#9733;</label>
-        <input type="radio" id="star4" name="rating" value="2">
+        <input type="radio" id="star4" name="rating" value="2" />
         <label for="star4">&#9733;</label>
-        <input type="radio" id="star5" name="rating" value="1">
+        <input type="radio" id="star5" name="rating" value="1" />
         <label for="star5">&#9733;</label>
       </div>
-      <input
-        type="datetime-local"
-        name="todo-limit"
-        class ="limitBox"
-        required
-      />
-      <input
-        type ="submit"
-        value="click"
-      />
+      <input type="datetime-local" name="todo-limit" class="limitBox" required />
+      <input type="submit" value="click" />
     </form>
     <ul id="todo-list">
       <li id="index">
-        <span class = todoStyle>할 일</span>
-        <span class = todoStyle>중요도</span>
-        <span class = todoStyle>남은시간</span>
+        <span class="todoStyle">할 일</span>
+        <span class="todoStyle">중요도</span>
+        <span class="todoStyle">남은시간</span>
       </li>
     </ul>
-    <div id="canvas-container">      
+    <div class="slider-container">
+      <button id="pre">◀</button>
+      <input type="range" min="1" max="52" id="week_slider" class="hidden" />
+      <input type="range" min="1" max="7" id="day_slider" class="hidden" />
+      <input type="range" min="1" max="24" id="hour_slider" />
+      <input type="range" min="1" max="60" id="minute_slider" class="hidden" />
+      <input type="range" min="1" max="60" id="second_slider" class="hidden" />
+      <button id="next">▶</button>
+      <p>Value: <span id="value"></span></p>
+    </div>
+    <div id="canvas-container">
       <canvas id="todoCanvas"></canvas>
     </div>
-    <script src="js/todo.js"></script>
-    <script src="js/graph.js"></script>
-    <!-- <script src="js/greetings.js"></script> -->
-    <!-- <script src="js/clock.js"></script> -->
-    <!-- <script src="js/quotes.js"></script> -->
-    <!-- <script src="js/background.js"></script> -->
+    <script src="js/time.js"></script>
+    <script src="js/todoform.js"></script>
+    <script src="js/slider.js"></script>
+    <script src="js/onaxis.js"></script>
+    <script src="js/ontodo.js"></script>
+    <script src="js/frame.js"></script>
   </body>
 </html>

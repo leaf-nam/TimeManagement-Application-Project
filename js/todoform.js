@@ -15,29 +15,28 @@ function saveToDos() {
   savedToDos = localStorage.getItem(TODOS_KEY);
   parsedToDosOnGraph = JSON.parse(savedToDos);
 }
-// Todo의 limit까지 남은시간을 계산하기 위한 함수
-function RemainTimeCalcurate(todo) {
-  const limit = todo.limit;
-  const hours = String(Math.floor(limit / (60 * 60))).padStart(2, "0");
-  const minutes = String(Math.floor((limit - hours * 60 * 60) / 60)).padStart(2, "0");
-  const seconds = String(Math.floor(limit - hours * 60 * 60 - minutes * 60)).padStart(2, "0");
-  return [hours, minutes, seconds];
+// Graph 내 todo의 속성을 가져와서 html로 변경해주는 함수
+function syncGraphToHtml(todo) {
+  const toDoInHtml = toDoList.querySelector(`li[id="${String(todo.id)}"]`);
+  todo.limit = new Date(today.getTime() + todo.x / distancePerSecond);
+  toDoInHtml.querySelector("span[class='limitBox']").innerText = `Remains = ${formatTime(todo.limit, "hh:mm:ss")}`;
+  todo.important = Math.round(5.5 - (todo.y * 5) / graphHeight);
+  toDoInHtml.querySelector("span[class='importancyBox']").innerText = "★".repeat(todo.important) + "☆".repeat(5 - todo.important);
 }
 // 새로운 Todo의 속성값을 저장 후 html로 가져오는 함수
 function paintTodo(newTodo) {
   const li = document.createElement("li");
   li.id = newTodo.id;
-  li.classList.add("todoStyle");
+  li.classList.add("todo-style");
   const span_input = document.createElement("span");
   span_input.innerText = newTodo.text;
-  span_input.classList.add("textBox");
+  span_input.classList.add("text-box");
   const span_importancy = document.createElement("span");
   span_importancy.innerText = "★".repeat(newTodo.important) + "☆".repeat(5 - newTodo.important);
-  span_importancy.classList.add("importancyBox");
+  span_importancy.classList.add("importancy-box");
   const span_limit = document.createElement("span");
-  span_limit.classList.add("limitBox");
-  const remains = RemainTimeCalcurate(newTodo);
-  span_limit.innerText = `Remains = ${remains[0]} : ${remains[1]} : ${remains[2]}`;
+  span_limit.classList.add("limit-box");
+  span_limit.innerText = `Remains = ${formatTime(newTodo.id, "hh:mm:ss")}`;
   const button = document.createElement("button");
   button.innerText = "❌";
   button.addEventListener("click", deleteToDo);
@@ -69,12 +68,11 @@ function handleToDoSubmit(event) {
     id: Date.now(),
     text: textTodo,
     important: selectedImportancy,
-    limit: (new Date(limitTodo).getTime() - new Date().getTime()) / 1000,
+    limit: new Date(limitTodo),
     is_mouse_on: false,
     mouseLock: false,
   };
-
-  newTodo.x = (newTodo.limit * graphWidth) / (24 * 60 * 60);
+  newTodo.x = ((newTodo.limit.getTime() - today.getTime()) / 1000) * distancePerSecond;
   newTodo.y = (graphHeight * (9 - (newTodo.important - 1) * 2)) / 10;
   paintTodo(newTodo);
   parsedToDos.push(newTodo);
