@@ -8,6 +8,20 @@
     <title>TimeManagement</title>
   </head>
   <body>
+    <div class="title">TIME MANAGEMENT</div>
+    <div id="canvas-container">
+      <canvas id="todoCanvas"></canvas>
+    </div>
+    <div class="slider-container">
+      <button id="pre">◀</button>
+      <input type="range" min="1" max="52" id="week_slider" class="hidden" />
+      <input type="range" min="1" max="7" id="day_slider" class="hidden" />
+      <input type="range" min="1" max="24" id="hour_slider" value="24" />
+      <input type="range" min="1" max="60" id="minute_slider" class="hidden" />
+      <input type="range" min="1" max="60" id="second_slider" class="hidden" />
+      <button id="next">▶</button>
+      <p>Value: <span id="value"></span></p>
+    </div>
     <form id="todo-form">
       <input type="text" class="form-text-box" name="todo-text" placeholder="Write What To Do!" required />
       <div id="stars" class="rating" aria-required="true">
@@ -33,19 +47,6 @@
         <span class="todoStyle">남은시간</span>
       </li>
     </ul>
-    <div class="slider-container">
-      <button id="pre">◀</button>
-      <input type="range" min="1" max="52" id="week_slider" class="hidden" />
-      <input type="range" min="1" max="7" id="day_slider" class="hidden" />
-      <input type="range" min="1" max="24" id="hour_slider" />
-      <input type="range" min="1" max="60" id="minute_slider" class="hidden" />
-      <input type="range" min="1" max="60" id="second_slider" class="hidden" />
-      <button id="next">▶</button>
-      <p>Value: <span id="value"></span></p>
-    </div>
-    <div id="canvas-container">
-      <canvas id="todoCanvas"></canvas>
-    </div>
     <script src="js/time.js"></script>
     <script src="js/todoform.js"></script>
     <script src="js/slider.js"></script>

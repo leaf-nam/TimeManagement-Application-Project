@@ -44,13 +44,13 @@ function paintAxisY_byArr(arr, startIdx, recur) {
 function paintAxisX() {
   ctx.strokeStyle = "gray";
   ctx.lineWidth = 1;
-  for (let i = 1; i <= 5; i++) {
-    let axisX_y = (graphHeight / 10) * (2 * i - 1);
+  for (let i = 0; i <= 4; i++) {
+    let axisX_y = (graphHeight / 5) * i;
     ctx.beginPath();
     ctx.moveTo(0, axisX_y);
     ctx.lineTo(graphWidth, axisX_y);
     ctx.stroke();
     ctx.font = `${fontSize / 3}px Arial`;
-    ctx.fillText("★".repeat(6 - i) + "☆".repeat(i - 1), 0, (graphHeight / 10) * (2 * i - 1));
+    ctx.fillText("★".repeat(5 - i) + "☆".repeat(i), 0, (graphHeight / 5) * i + fontSize / 3);
   }
 }

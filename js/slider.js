@@ -11,8 +11,8 @@ const nextButton = SliderContainer.querySelector("#next");
 let sliderArr = [weekSlider, daySlider, hourSlider, minuteSlider, secondSlider];
 let nowSlider = 2;
 sliderArr[nowSlider].oninput = sliding;
-sliderOutput.innerHTML = hourSlider.value;
-let scale = Number(hourSlider.value);
+sliderOutput.innerHTML = 24;
+let scale = 24;
 let scaleForSlider = 3600;
 let axisY_scale = "시";
 // 슬라이더 움직일 때 스케일 변화
@@ -41,6 +41,7 @@ function clickButton(event) {
   sliderArr[nowSlider].classList.remove("hidden");
   sliderArr[nowSlider].oninput = sliding;
   sliderOutput.innerHTML = sliderArr[nowSlider].value;
+  distancePerSecond = graphWidth / scale / scaleForSlider;
 }
 
 preButton.addEventListener("click", clickButton);

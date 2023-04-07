@@ -42,11 +42,11 @@ function handleMouseUp() {
   isMouseDown = false;
   parsedToDosOnGraph.forEach((todo) => {
     if (todo.mouseLock) {
-      syncGraphToHtml(todo);
-      todo.x = ((todo.limit.getTime() - today.getTime()) / 1000) * distancePerSecond;
-      todo.y = (graphHeight * (9 - (todo.important - 1) * 2)) / 10;
+      // syncGraphToHtml(todo);
+      // todo.x = ((todo.limit.getTime() - today.getTime()) / 1000) * distancePerSecond;
+      // todo.y = (graphHeight * (9 - (todo.important - 1) * 2)) / 10;
+      todo.mouseLock = false;
     }
-    todo.mouseLock = false;
   });
   parsedToDos = parsedToDosOnGraph;
   saveToDos();
