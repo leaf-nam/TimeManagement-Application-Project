@@ -1,15 +1,9 @@
 // html 객체 불러오기
 const canvas = document.querySelector("#todoCanvas");
-const canvasContainer = document.querySelector("#canvas-container");
-const graphWidth = window.innerWidth;
-const graphHeight = window.innerHeight - 200;
 // 캔버스 설정
 canvas.width = graphWidth;
 canvas.height = graphHeight;
 const ctx = canvas.getContext("2d");
-// 스케일 설정
-let distancePerSecond = graphWidth / scale / scaleForSlider;
-let distancePerFrame = getDistancePerFrame();
 // 객체 크기설정
 const radius = 20;
 const fontSize = 60;
@@ -27,22 +21,19 @@ function drawFrame() {
   measureOneSecond += distancePerFrame / distancePerSecond;
   if (measureOneSecond > 1) {
     measureOneSecond = 0;
-    console.log("hi");
+    // console.log("hi");
     parsedToDosOnGraph.forEach((todo) => {
-      // console.log(todo.limit);
-      // console.log(todo.x / distancePerSecond);
+      todo.limit = todo.x / distancePerSecond;
+      // syncGraphToHtml(todo);
     });
   }
   // 격자 그리기
   paintAxisX();
   paintAxisY();
   // 각각의 Todo에서 작동해야 하는 함수(forEach문)
-  // 1. 마우스와 거리 구하기
-  // 2. Todo그래프에 그리기
-  // 3. 마우스 올려지면 Rect 그리기
   parsedToDosOnGraph.forEach((todo) => {
-    distanceToMouse(todo);
     paintTodoOnGraph(todo);
+    distanceToMouse(todo);
     if (todo.is_mouse_on) {
       paintTodoRectOnGraph(todo);
     }
@@ -51,5 +42,5 @@ function drawFrame() {
   requestAnimationFrame(drawFrame);
 }
 //<---------------------------------main------------------------------------->
-let parsedToDosOnGraph = JSON.parse(savedToDos);
+
 requestAnimationFrame(drawFrame);

@@ -1,26 +1,16 @@
 .hidden {
   display: none;
 }
-
 .title {
   position: relative;
   font-size: 30px;
   text-align: center;
 }
-#canvas-container {
-  position: relative;
-  height: 500px;
-  margin-bottom: 30px;
-}
 
-.slider-container {
-  position: absolute;
-  bottom: 50px;
-}
 #todo-form {
-  position: absolute;
-  bottom: 0px;
-  padding-left: 0;
+  position: relative;
+  top: 20px;
+  left: 600px;
   padding-inline-start: 0;
 }
 
@@ -60,33 +50,50 @@
 .rating input[type="radio"]:hover + label {
   color: #00620f;
 }
-
-#todo-list {
-  list-style-type: none;
-  display: flex;
-  align-items: flex-start;
-  align-content: flex-start;
-  flex-direction: column;
-  flex-wrap: wrap;
-  overflow: auto;
-  position: absolute;
-  left: 1000px;
-  bottom: 0px;
+.form-time-box {
+  margin-left: 10px;
 }
 
-#todo-list #index span:not(:first-child) {
-  margin-left: 70px;
-  margin-bottom: 30px;
+.slider-container {
+  position: relative;
+  top: 15px;
+  margin-left: 100px;
+}
+#pre {
+  float: left;
+}
+
+#canvas-container {
+  background-color: antiquewhite;
+  width: 60vw;
+  height: 60vh;
+  float: left;
+  resize: horizontal;
+}
+#left-panel {
+  width: 25vw;
+  float: left;
+  resize: horizontal;
+  background-color: bisque;
+}
+#todo-list {
+  font-size: 12px;
+  list-style-type: none;
+  position: relative;
+}
+
+#todo-list #index span {
+  text-align: center;
+  margin-left: 50px;
 }
 
 .todo-style {
-  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .text-box {
   text-align: center;
   float: left;
-  font-size: 15px;
   border: 2px solid #ccc;
   width: 100px;
 }
@@ -94,15 +101,26 @@
 .importancy-box {
   text-align: center;
   float: left;
-  font-size: 15px;
   color: #6bd574;
   width: 80px;
   margin-left: 10px;
 }
 
-.limit-box {
+.time-box {
   text-align: center;
   border: 2px solid #ccc;
   width: 180px;
-  margin-left: 40px;
+  margin-left: 10px;
+}
+.delete-button {
+  background-color: beige;
+  text-align: center;
+  border: 2px solid #ccc;
+}
+
+#right-panel {
+  width: 14vw;
+  float: left;
+  resize: horizontal;
+  background-color: cadetblue;
 }

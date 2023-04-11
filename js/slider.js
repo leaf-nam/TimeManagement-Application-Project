@@ -15,6 +15,9 @@ sliderOutput.innerHTML = 24;
 let scale = 24;
 let scaleForSlider = 3600;
 let axisY_scale = "시";
+let distancePerSecond = window.innerWidth / scale / scaleForSlider;
+let distancePerFrame = getDistancePerFrame();
+let parsedToDosOnGraph = JSON.parse(savedToDos);
 // 슬라이더 움직일 때 스케일 변화
 function sliding() {
   value = Number(this.value);
@@ -22,12 +25,9 @@ function sliding() {
   scale = value;
   distancePerSecond = graphWidth / scale / scaleForSlider;
   paintAxisResetFlag = true;
-}
-// 슬라이더에 따라 스케일을 바꿔주는 함수
-function scaling(num) {
-  scaleArr = [7 * 24 * 60 * 60, 24 * 60 * 60, 60 * 60, 60, 1];
-  scaleNameArr = ["주", "일", "시", "분", "초"];
-  return [scaleArr[num], scaleNameArr[num]];
+  parsedToDosOnGraph.forEach((todo) => {
+    todo.x = todo.limit * distancePerSecond;
+  });
 }
 // 버튼 누를때 함수
 function clickButton(event) {
@@ -37,11 +37,22 @@ function clickButton(event) {
   } else {
     if (nowSlider < 4) nowSlider += 1;
   }
-  [scaleForSlider, axisY_scale] = scaling(nowSlider);
   sliderArr[nowSlider].classList.remove("hidden");
   sliderArr[nowSlider].oninput = sliding;
-  sliderOutput.innerHTML = sliderArr[nowSlider].value;
+  [scaleForSlider, axisY_scale] = changeSlider(nowSlider);
+  value = Number(sliderArr[nowSlider].value);
+  sliderOutput.innerHTML = value;
+  scale = value;
   distancePerSecond = graphWidth / scale / scaleForSlider;
+  parsedToDosOnGraph.forEach((todo) => {
+    todo.x = todo.limit * distancePerSecond;
+  });
+}
+// 슬라이더가 바뀌면 스케일을 바꿔주는 함수
+function changeSlider(num) {
+  scaleArr = [7 * 24 * 60 * 60, 24 * 60 * 60, 60 * 60, 60, 1];
+  scaleNameArr = ["주", "일", "시", "분", "초"];
+  return [scaleArr[num], scaleNameArr[num]];
 }
 
 preButton.addEventListener("click", clickButton);

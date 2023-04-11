@@ -36,6 +36,7 @@ function paintAxisY_byArr(arr, startIdx, recur) {
     ctx.lineTo(axisY_x, graphHeight);
     ctx.stroke();
     ctx.font = `${fontSize / 3}px Arial`;
+    ctx.fillStyle = "black";
     ctx.fillText(axisY_index + axisY_scale, axisY_x, graphHeight);
   }
   return recur;
@@ -51,6 +52,7 @@ function paintAxisX() {
     ctx.lineTo(graphWidth, axisX_y);
     ctx.stroke();
     ctx.font = `${fontSize / 3}px Arial`;
+    ctx.fillStyle = "green";
     ctx.fillText("★".repeat(5 - i) + "☆".repeat(i), 0, (graphHeight / 5) * i + fontSize / 3);
   }
 }

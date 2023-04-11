@@ -42,9 +42,8 @@ function handleMouseUp() {
   isMouseDown = false;
   parsedToDosOnGraph.forEach((todo) => {
     if (todo.mouseLock) {
-      // syncGraphToHtml(todo);
-      // todo.x = ((todo.limit.getTime() - today.getTime()) / 1000) * distancePerSecond;
-      // todo.y = (graphHeight * (9 - (todo.important - 1) * 2)) / 10;
+      syncGraphToHtml(todo);
+      todo.y = (graphHeight / 5) * (5 - todo.important);
       todo.mouseLock = false;
     }
   });
@@ -65,6 +64,7 @@ function paintTodoRectOnGraph(todo) {
   ctx.beginPath();
   ctx.rect(mouseX, mouseY - radius * 5, radius * 15, radius * 5);
   ctx.stroke();
+  ctx.fillStyle = "green";
   ctx.font = `${fontSize / 2}px Arial`;
   ctx.fillText(`할 일 : ${todo.text}`, mouseX, mouseY - fontSize);
   ctx.fillText(`남은시간 = ${formatTime(todo.limit, "hh:mm:ss")}`, mouseX, mouseY - fontSize / 2);

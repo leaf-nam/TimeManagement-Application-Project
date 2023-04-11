@@ -9,19 +9,6 @@
   </head>
   <body>
     <div class="title">TIME MANAGEMENT</div>
-    <div id="canvas-container">
-      <canvas id="todoCanvas"></canvas>
-    </div>
-    <div class="slider-container">
-      <button id="pre">◀</button>
-      <input type="range" min="1" max="52" id="week_slider" class="hidden" />
-      <input type="range" min="1" max="7" id="day_slider" class="hidden" />
-      <input type="range" min="1" max="24" id="hour_slider" value="24" />
-      <input type="range" min="1" max="60" id="minute_slider" class="hidden" />
-      <input type="range" min="1" max="60" id="second_slider" class="hidden" />
-      <button id="next">▶</button>
-      <p>Value: <span id="value"></span></p>
-    </div>
     <form id="todo-form">
       <input type="text" class="form-text-box" name="todo-text" placeholder="Write What To Do!" required />
       <div id="stars" class="rating" aria-required="true">
@@ -37,16 +24,41 @@
         <input type="radio" id="star5" name="rating" value="1" />
         <label for="star5">&#9733;</label>
       </div>
-      <input type="datetime-local" name="todo-limit" class="limitBox" required />
+      <input type="datetime-local" name="todo-start" class="form-time-box" />
+      <input type="datetime-local" name="todo-end" class="form-time-box" />
       <input type="submit" value="click" />
     </form>
-    <ul id="todo-list">
-      <li id="index">
-        <span class="todoStyle">할 일</span>
-        <span class="todoStyle">중요도</span>
-        <span class="todoStyle">남은시간</span>
-      </li>
-    </ul>
+    <div class="slider-container">
+      <button id="pre">◀</button>
+      <input type="range" min="1" max="52" id="week_slider" class="hidden" />
+      <input type="range" min="1" max="7" id="day_slider" class="hidden" />
+      <input type="range" min="1" max="24" id="hour_slider" value="24" />
+      <input type="range" min="1" max="60" id="minute_slider" class="hidden" />
+      <input type="range" min="1" max="60" id="second_slider" class="hidden" />
+      <button id="next">▶</button>
+      <p>Value: <span id="value"></span></p>
+    </div>
+    <div id="canvas-container">
+      <canvas id="todoCanvas"></canvas>
+    </div>
+    <div id="left-panel">
+      <ul id="todo-list">
+        <li id="index">
+          <span>할 일</span>
+          <span>중요도</span>
+          <span>시작시간</span>
+          <span>끝시간</span>
+        </li>
+      </ul>
+    </div>
+    <div id="right-panel">
+      <ul id="todo-list">
+        <li id="index">
+          <span>할 일</span>
+          <span>중요도</span>
+        </li>
+      </ul>
+    </div>
     <script src="js/time.js"></script>
     <script src="js/todoform.js"></script>
     <script src="js/slider.js"></script>

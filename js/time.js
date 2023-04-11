@@ -20,6 +20,17 @@ function formatTime(time, format) {
     .replace(/ss/g, second.toString().padStart(2, "0"));
   return formattedTime;
 }
+//second를 불러왔을 때 형식을 format해주는 함수
+function formatSecond(sec, format) {
+  const hour = parseInt(sec / (60 * 60));
+  const minute = parseInt((sec - hour * 60 * 60) / 60);
+  const second = parseInt(sec - hour * 60 * 60 - minute * 60);
+  const formattedSecond = format
+    .replace(/hh/g, hour.toString().padStart(2, "0"))
+    .replace(/mm/g, minute.toString().padStart(2, "0"))
+    .replace(/ss/g, second.toString().padStart(2, "0"));
+  return formattedSecond;
+}
 // 1프레임에 가야하는 거리를 구하는 함수
 function getDistancePerFrame(timestamp = new Date()) {
   const elapsed = (timestamp - lastTime) / 1000;
